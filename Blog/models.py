@@ -13,3 +13,8 @@ class Post(models.Model):
     draft = models.BooleanField(default=True)
     tags = TaggableManager()
     author = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name='Post_User')
+    image = models.ImageField(upload_to='posts')
+
+    def __str__(self):
+        return self.title
+    
