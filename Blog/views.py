@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm , CommentForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
@@ -11,8 +11,19 @@ class PostList(ListView):
 
 
 
-class PostDetails(DetailView):
-    model = Post
+def post_details(request,pk):
+    data = Post.objects.get(id=pk)
+    post_comments = Comment.objects.filter(post=data)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            myform = form.save(commit=False)
+            myform.user = request.user
+            myform.post = data
+            myform.save()
+    else:
+        form = CommentForm()
+    return render(request,'Blog/post_detail.html',{'post':data, 'form':form, 'post_comments':post_comments})
 
 
 
